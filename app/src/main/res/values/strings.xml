@@ -11,5 +11,6 @@
         <item>Food</item>
         <item>Clothing</item>
         <item>Fashion</item>
+        <item>Services</item>
     </string-array>
 </resources>

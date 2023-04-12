@@ -33,10 +33,6 @@ class AddProductFragment : Fragment() {
     private var _binding: FragmentAddProductBinding? = null
     private val binding
         get() = _binding!!
-
-//    private val repository: ProductListRepository by lazy {
-//        ProductListRepository()
-//    }
     var imageUri: Uri? = null
 
     private val contract = registerForActivityResult(ActivityResultContracts.GetContent()) {
@@ -52,8 +48,6 @@ class AddProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-
-
         _binding = FragmentAddProductBinding.inflate(inflater, container, false)
 
         var spinnerProductType: String = "Accessories"
@@ -63,12 +57,6 @@ class AddProductFragment : Fragment() {
         binding.productTypeList.setOnItemClickListener { adapterView, view, i, l ->
             spinnerProductType = adapterView.getItemAtPosition(i).toString()
         }
-
-//        productViewModel = ViewModelProvider(
-//            this,
-//            ProductViewModelFactory(repository)
-//        )[ProductViewModel::class.java]
-
 
 
         binding.ivProduct.setOnClickListener {

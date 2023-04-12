@@ -27,6 +27,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="10dp"
         app:cardCornerRadius="10dp"
+        app:cardPreventCornerOverlap="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_top_text">
@@ -34,7 +35,10 @@
         <ImageView
             android:id="@+id/iv_product"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="300dp"
+            android:src="@drawable/image_placeholder"
+            android:scaleType="fitXY"
+            />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -112,6 +116,7 @@
                 android:id="@+id/etProductPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
                 android:fontFamily="@font/sofiaprosoftmedium"
                 android:hint="Price">
 
@@ -134,6 +139,7 @@
                 android:id="@+id/etProductTax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
                 android:fontFamily="@font/sofiaprosoftmedium"
                 android:hint="Tax">
 

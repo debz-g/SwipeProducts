@@ -47,8 +47,6 @@ class SearchProductFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentSearchProductBinding.inflate(inflater, container, false)
 
-//        productViewModel = ViewModelProvider(this, ProductViewModelFactory(repository))[ProductViewModel::class.java]
-
         val productViewModel: ProductViewModel by viewModels()
 
         productViewModel.getProducts()
@@ -56,6 +54,7 @@ class SearchProductFragment : Fragment() {
         val loadProgress = binding.shimmerEffect
 
         loadProgress.visibility = View.VISIBLE
+        binding.noData.visibility = View.INVISIBLE
 
         productViewModel.response.observe(viewLifecycleOwner, Observer {
              productList = it.body() as ArrayList<productListModelItem>
@@ -68,7 +67,9 @@ class SearchProductFragment : Fragment() {
             binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
 
             productSearchAdapter.onItemClick = {
-                Toast.makeText(context, "One Click", Toast.LENGTH_SHORT).show()
+                val dialog = ProductDetailsBottomSheet(it)
+                dialog.isCancelable = true
+                dialog.show(parentFragmentManager,"ProductBottomSheetDialogFragment")
             }
         })
 
@@ -96,14 +97,16 @@ class SearchProductFragment : Fragment() {
         if(query!=null){
             val filteredList = ArrayList<productListModelItem>()
             for (i in productList){
-                if(i.productName!!.lowercase(Locale.ROOT).contains(query)){
+                if(i.productName!!.lowercase(Locale.ROOT).contains(query.lowercase(Locale.ROOT))){
                     filteredList.add(i)
                 }
             }
 
             if(filteredList.isEmpty()){
-                Toast.makeText(requireContext(), "No data found", Toast.LENGTH_SHORT).show()
+                binding.searchRecyclerView.visibility = View.INVISIBLE
+                binding.noData.visibility = View.VISIBLE
             } else {
+                binding.searchRecyclerView.visibility = View.VISIBLE
                 productSearchAdapter.setfilteredList(filteredList)
             }
         }
