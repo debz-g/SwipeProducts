@@ -1,15 +1,22 @@
-package dev.redfox.swipeproducts.networking
+package dev.redfox.swipeproducts.di
 
 import com.google.gson.GsonBuilder
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dev.redfox.swipeproducts.networking.SwipeApiInterface
 import dev.redfox.swipeproducts.utils.Constants.Companion.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
-object ProdctListRetrofitInstance {
+@Module
+@InstallIn(ViewModelComponent::class)
+object AppModule {
+
     private var mClient: OkHttpClient? = null
     private val gson = GsonBuilder().setLenient().create()
 
@@ -17,7 +24,7 @@ object ProdctListRetrofitInstance {
         get() {
             if (mClient == null) {
                 val interceptor = HttpLoggingInterceptor()
-                interceptor.level = HttpLoggingInterceptor.Level.BODY
+                interceptor.level = HttpLoggingInterceptor.Level.BASIC
 
                 val httpBuilder = OkHttpClient.Builder()
                 httpBuilder
@@ -30,17 +37,20 @@ object ProdctListRetrofitInstance {
             return mClient!!
         }
 
-    private val retrofit by lazy {
-        Retrofit.Builder()
+    @Provides
+    fun getRetrofitService(retrofit: Retrofit): SwipeApiInterface {
+        return retrofit.create(SwipeApiInterface::class.java)
+    }
+
+    @Provides
+    fun getRetrofitInstance(): Retrofit {
+        return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
-
     }
 
-    val api: SwipeApiInterface by lazy {
-        retrofit.create(SwipeApiInterface::class.java)
-    }
+
 
 }

@@ -9,8 +9,10 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
 import dev.redfox.swipeproducts.R
 import dev.redfox.swipeproducts.databinding.FragmentAddProductBinding
 import dev.redfox.swipeproducts.networking.ProductListRepository
@@ -25,18 +27,16 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 
-
-private lateinit var productViewModel: ProductViewModel
-
+@AndroidEntryPoint
 class AddProductFragment : Fragment() {
 
     private var _binding: FragmentAddProductBinding? = null
     private val binding
         get() = _binding!!
 
-    private val repository: ProductListRepository by lazy {
-        ProductListRepository()
-    }
+//    private val repository: ProductListRepository by lazy {
+//        ProductListRepository()
+//    }
     var imageUri: Uri? = null
 
     private val contract = registerForActivityResult(ActivityResultContracts.GetContent()) {
@@ -64,10 +64,12 @@ class AddProductFragment : Fragment() {
             spinnerProductType = adapterView.getItemAtPosition(i).toString()
         }
 
-        productViewModel = ViewModelProvider(
-            this,
-            ProductViewModelFactory(repository)
-        )[ProductViewModel::class.java]
+//        productViewModel = ViewModelProvider(
+//            this,
+//            ProductViewModelFactory(repository)
+//        )[ProductViewModel::class.java]
+
+
 
         binding.ivProduct.setOnClickListener {
             contract.launch("image/*")
@@ -94,6 +96,7 @@ class AddProductFragment : Fragment() {
         val filesDir = requireActivity().filesDir
         val file = File(filesDir, "image.png")
         val body: MultipartBody.Part?
+        val productViewModel: ProductViewModel by viewModels()
 
         if (imageUri == null) {
             val reqBody = file.asRequestBody("image/*".toMediaTypeOrNull())

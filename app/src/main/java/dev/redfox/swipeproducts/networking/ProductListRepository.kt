@@ -7,14 +7,15 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
+import javax.inject.Inject
 
-class ProductListRepository() {
+class ProductListRepository @Inject constructor(private val swipeApiInterface: SwipeApiInterface) {
 
     suspend fun getProducts(): Response<List<productListModelItem>> {
-        return ProdctListRetrofitInstance.api.getProducts()
+        return swipeApiInterface.getProducts()
     }
 
     suspend fun addProducts(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody, productImage: MultipartBody.Part): Response<productAddModel>{
-        return ProdctListRetrofitInstance.api.addProducts(productName,productType,price,tax,productImage)
+        return swipeApiInterface.addProducts(productName,productType,price,tax,productImage)
     }
 }

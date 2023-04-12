@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import dev.redfox.swipeproducts.R
 import dev.redfox.swipeproducts.adapters.ProductSearchAdapter
 import dev.redfox.swipeproducts.databinding.FragmentSearchProductBinding
@@ -25,16 +26,17 @@ import dev.redfox.swipeproducts.viewmodels.ProductViewModelFactory
 import java.util.Locale
 
 private lateinit var productSearchAdapter: ProductSearchAdapter
-private lateinit var productViewModel: ProductViewModel
+
+@AndroidEntryPoint
 class SearchProductFragment : Fragment() {
 
     private var _binding: FragmentSearchProductBinding? = null
     private val binding
         get() = _binding!!
 
-    private val repository: ProductListRepository by lazy {
-        ProductListRepository()
-    }
+//    private val repository: ProductListRepository by lazy {
+//        ProductListRepository()
+//    }
 
     var productList = ArrayList<productListModelItem>()
 
@@ -45,7 +47,9 @@ class SearchProductFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentSearchProductBinding.inflate(inflater, container, false)
 
-        productViewModel = ViewModelProvider(this, ProductViewModelFactory(repository))[ProductViewModel::class.java]
+//        productViewModel = ViewModelProvider(this, ProductViewModelFactory(repository))[ProductViewModel::class.java]
+
+        val productViewModel: ProductViewModel by viewModels()
 
         productViewModel.getProducts()
 
