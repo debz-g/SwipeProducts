@@ -3,6 +3,7 @@ package dev.redfox.swipeproducts.networking
 import dev.redfox.swipeproducts.models.productAddModel
 import dev.redfox.swipeproducts.models.productListModelItem
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.GET
@@ -17,10 +18,10 @@ interface SwipeApiInterface {
     @Multipart
     @POST("/api/public/add")
     suspend fun addProducts(
-        @Part("product_name") productName: String,
-        @Part("product_type") productType: String,
-        @Part("price") price: String,
-        @Part("tax") tax: String,
+        @Part("product_name") productName: RequestBody,
+        @Part("product_type") productType: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("tax") tax: RequestBody,
         @Part productImage: MultipartBody.Part
     ): Response<productAddModel>
 

@@ -1,10 +1,13 @@
 package dev.redfox.swipeproducts.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -19,6 +22,7 @@ import dev.redfox.swipeproducts.models.productListModelItem
 import dev.redfox.swipeproducts.networking.ProductListRepository
 import dev.redfox.swipeproducts.viewmodels.ProductViewModel
 import dev.redfox.swipeproducts.viewmodels.ProductViewModelFactory
+import java.util.Locale
 
 private lateinit var productSearchAdapter: ProductSearchAdapter
 private lateinit var productViewModel: ProductViewModel
@@ -31,6 +35,8 @@ class SearchProductFragment : Fragment() {
     private val repository: ProductListRepository by lazy {
         ProductListRepository()
     }
+
+    var productList = ArrayList<productListModelItem>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,11 +54,11 @@ class SearchProductFragment : Fragment() {
         loadProgress.visibility = View.VISIBLE
 
         productViewModel.response.observe(viewLifecycleOwner, Observer {
-            val data: MutableList<productListModelItem> = it.body() as MutableList<productListModelItem>
+             productList = it.body() as ArrayList<productListModelItem>
 
             loadProgress.visibility = View.GONE
 
-            productSearchAdapter = ProductSearchAdapter(data)
+            productSearchAdapter = ProductSearchAdapter(productList)
             binding.searchRecyclerView.setHasFixedSize(true)
             binding.searchRecyclerView.adapter = productSearchAdapter
             binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -60,18 +66,45 @@ class SearchProductFragment : Fragment() {
             productSearchAdapter.onItemClick = {
                 Toast.makeText(context, "One Click", Toast.LENGTH_SHORT).show()
             }
-
-            productSearchAdapter.onItemLongClick = {
-                Toast.makeText(context, "Long click", Toast.LENGTH_SHORT).show()
-            }
         })
 
         binding.fabAddProduct.setOnClickListener {
             findNavController().navigate(R.id.action_searchProductFragment_to_addProductFragment)
         }
 
+        binding.searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterList(newText)
+                return true
+            }
+
+        })
+
 
         return binding.root
     }
+
+    private fun filterList(query: String?){
+        if(query!=null){
+            val filteredList = ArrayList<productListModelItem>()
+            for (i in productList){
+                if(i.productName!!.lowercase(Locale.ROOT).contains(query)){
+                    filteredList.add(i)
+                }
+            }
+
+            if(filteredList.isEmpty()){
+                Toast.makeText(requireContext(), "No data found", Toast.LENGTH_SHORT).show()
+            } else {
+                productSearchAdapter.setfilteredList(filteredList)
+            }
+        }
+    }
+
+
 
 }

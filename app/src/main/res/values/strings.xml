@@ -2,4 +2,14 @@
     <string name="app_name">SwipeProducts</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    
+    <string-array name="productTypes">
+        <item>Electronics</item>
+        <item>Groceries</item>
+        <item>Household</item>
+        <item>Accessories</item>
+        <item>Food</item>
+        <item>Clothing</item>
+        <item>Fashion</item>
+    </string-array>
 </resources>

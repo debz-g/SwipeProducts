@@ -11,6 +11,7 @@ import dev.redfox.swipeproducts.models.productListModelItem
 import dev.redfox.swipeproducts.networking.ProductListRepository
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 
 class ProductViewModel(private val productListRepository: ProductListRepository): ViewModel() {
@@ -28,7 +29,7 @@ class ProductViewModel(private val productListRepository: ProductListRepository)
         }
     }
 
-    fun addProducts(productName: String, productType: String, price: String, tax: String, productImage: MultipartBody.Part){
+    fun addProducts(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody, productImage: MultipartBody.Part){
         viewModelScope.launch {
             val addProductsResponse=productListRepository.addProducts(productName,productType,price,tax,productImage)
             _addApiResponse.value = addProductsResponse

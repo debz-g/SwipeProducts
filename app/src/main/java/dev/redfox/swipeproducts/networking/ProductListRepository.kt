@@ -4,6 +4,7 @@ import dev.redfox.swipeproducts.models.productAddModel
 import dev.redfox.swipeproducts.models.productListModel
 import dev.redfox.swipeproducts.models.productListModelItem
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 
@@ -13,7 +14,7 @@ class ProductListRepository() {
         return ProdctListRetrofitInstance.api.getProducts()
     }
 
-    suspend fun addProducts(productName: String, productType: String, price: String, tax: String, productImage: MultipartBody.Part): Response<productAddModel>{
+    suspend fun addProducts(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody, productImage: MultipartBody.Part): Response<productAddModel>{
         return ProdctListRetrofitInstance.api.addProducts(productName,productType,price,tax,productImage)
     }
 }

@@ -1,5 +1,6 @@
 package dev.redfox.swipeproducts.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,10 @@ import dev.redfox.swipeproducts.models.productListModel
 import dev.redfox.swipeproducts.models.productListModelItem
 
 class ProductSearchAdapter(
-    val productList: MutableList<productListModelItem>
+    var productList: MutableList<productListModelItem>
 ) : RecyclerView.Adapter<ProductSearchAdapter.ProductViewHolder>() {
 
     var onItemClick: ((productListModelItem) -> Unit)? = null
-    var onItemLongClick: ((productListModelItem) -> Unit)? = null
 
     class ProductViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
@@ -46,22 +46,19 @@ class ProductSearchAdapter(
         }
 
 
-
-
-
-
         holder.itemView.setOnClickListener() {
             onItemClick?.invoke(product)
-        }
-
-        holder.itemView.setOnLongClickListener {
-            onItemLongClick?.invoke(product)
-            true
         }
 
     }
 
     override fun getItemCount(): Int {
         return productList.size
+    }
+
+
+    fun setfilteredList(productList: ArrayList<productListModelItem>){
+        this.productList = productList
+        notifyDataSetChanged()
     }
 }
