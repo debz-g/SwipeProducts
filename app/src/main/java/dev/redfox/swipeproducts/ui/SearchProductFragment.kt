@@ -1,28 +1,20 @@
 package dev.redfox.swipeproducts.ui
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import dev.redfox.swipeproducts.R
 import dev.redfox.swipeproducts.adapters.ProductSearchAdapter
 import dev.redfox.swipeproducts.databinding.FragmentSearchProductBinding
 import dev.redfox.swipeproducts.models.productListModelItem
-import dev.redfox.swipeproducts.networking.ProductListRepository
 import dev.redfox.swipeproducts.viewmodels.ProductViewModel
-import dev.redfox.swipeproducts.viewmodels.ProductViewModelFactory
 import java.util.Locale
 
 private lateinit var productSearchAdapter: ProductSearchAdapter
@@ -51,20 +43,15 @@ class SearchProductFragment : Fragment() {
 
         productViewModel.getProducts()
 
-        val loadProgress = binding.shimmerEffect
-
-        loadProgress.visibility = View.VISIBLE
-        binding.noData.visibility = View.INVISIBLE
-
         productViewModel.response.observe(viewLifecycleOwner, Observer {
              productList = it.body() as ArrayList<productListModelItem>
-
-            loadProgress.visibility = View.GONE
 
             productSearchAdapter = ProductSearchAdapter(productList)
             binding.searchRecyclerView.setHasFixedSize(true)
             binding.searchRecyclerView.adapter = productSearchAdapter
             binding.searchRecyclerView.layoutManager = LinearLayoutManager(context)
+
+            binding.shimmerEffect.visibility = View.INVISIBLE
 
             productSearchAdapter.onItemClick = {
                 val dialog = ProductDetailsBottomSheet(it)
@@ -107,6 +94,7 @@ class SearchProductFragment : Fragment() {
                 binding.noData.visibility = View.VISIBLE
             } else {
                 binding.searchRecyclerView.visibility = View.VISIBLE
+                binding.noData.visibility = View.INVISIBLE
                 productSearchAdapter.setfilteredList(filteredList)
             }
         }

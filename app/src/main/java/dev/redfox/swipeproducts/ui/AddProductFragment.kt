@@ -1,5 +1,6 @@
 package dev.redfox.swipeproducts.ui
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,13 +13,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.redfox.swipeproducts.R
 import dev.redfox.swipeproducts.databinding.FragmentAddProductBinding
 import dev.redfox.swipeproducts.networking.ProductListRepository
 import dev.redfox.swipeproducts.utils.Snacker
 import dev.redfox.swipeproducts.viewmodels.ProductViewModel
-import dev.redfox.swipeproducts.viewmodels.ProductViewModelFactory
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -26,6 +29,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Files
 
 @AndroidEntryPoint
 class AddProductFragment : Fragment() {
@@ -39,8 +43,6 @@ class AddProductFragment : Fragment() {
         imageUri = it!!
         binding.ivProduct.setImageURI(it)
     }
-
-
 
 
     override fun onCreateView(
@@ -80,49 +82,70 @@ class AddProductFragment : Fragment() {
     }
 
 
+    @SuppressLint("ResourceType")
     fun upload(productName: String, productType: String, price: String, tax: String) {
-        val filesDir = requireActivity().filesDir
-        val file = File(filesDir, "image.png")
-        val body: MultipartBody.Part?
-        val productViewModel: ProductViewModel by viewModels()
 
-        if (imageUri == null) {
-            val reqBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData("invalid", file.name, reqBody)
-        } else {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val productViewModel: ProductViewModel by viewModels()
 
-            val inputStream = requireActivity().contentResolver.openInputStream(imageUri!!)
-            val outputStream = FileOutputStream(file)
-            inputStream!!.copyTo(outputStream)
+            val productNameBody: RequestBody =
+                productName.toRequestBody("text/plain".toMediaTypeOrNull())
+            val productTypeBody: RequestBody =
+                productType.toRequestBody("text/plain".toMediaTypeOrNull())
+            val priceBody: RequestBody = price.toRequestBody("text/plain".toMediaTypeOrNull())
+            val taxBody: RequestBody = tax.toRequestBody("text/plain".toMediaTypeOrNull())
 
-            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-            body =
-                MultipartBody.Part.createFormData("files[]", file.name, requestBody)
+            if (imageUri == null) {
+                productViewModel.addProductsWithoutImage(
+                    productNameBody,
+                    productTypeBody,
+                    priceBody,
+                    taxBody
+                )
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                val filesDir = requireActivity().filesDir
+                val file = File(filesDir, "image.png")
+                val inputStream = requireActivity().contentResolver.openInputStream(imageUri!!)
+                val outputStream = FileOutputStream(file)
+                inputStream!!.copyTo(outputStream)
+
+                val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+                val body =
+                    MultipartBody.Part.createFormData("files[]", file.name, requestBody)
+
+                productViewModel.addProductsWithImage(
+                    productNameBody,
+                    productTypeBody,
+                    priceBody,
+                    taxBody,
+                    body
+                )
+                binding.progressBar.visibility = View.VISIBLE
+
+            }
+
+            productViewModel.addApiResponse.observe(viewLifecycleOwner, Observer {
+                if (it.body()!!.success == true) {
+                    Toast.makeText(requireContext(), "Product Added Succefully", Toast.LENGTH_SHORT)
+                        .show()
+                    binding.progressBar.visibility = View.INVISIBLE
+                    findNavController().navigate(R.id.action_addProductFragment_to_searchProductFragment)
+                }
+            })
+
+            productViewModel.addApiResponseAlt.observe(viewLifecycleOwner, Observer {
+                if (it.body()!!.success == true) {
+                    Toast.makeText(requireContext(), "Product Added Succefully", Toast.LENGTH_SHORT)
+                        .show()
+                    binding.progressBar.visibility = View.INVISIBLE
+                    findNavController().navigate(R.id.action_addProductFragment_to_searchProductFragment)
+
+                }
+            })
         }
 
 
-        val productNameBody: RequestBody =
-            productName.toRequestBody("text/plain".toMediaTypeOrNull())
-        val productTypeBody: RequestBody =
-            productType.toRequestBody("text/plain".toMediaTypeOrNull())
-        val priceBody: RequestBody = price.toRequestBody("text/plain".toMediaTypeOrNull())
-        val taxBody: RequestBody = tax.toRequestBody("text/plain".toMediaTypeOrNull())
-
-        productViewModel.addProducts(
-            productNameBody,
-            productTypeBody,
-            priceBody,
-            taxBody,
-            body
-        )
-
-        productViewModel.addApiResponse.observe(viewLifecycleOwner, Observer {
-            if (it.body()!!.success == true) {
-                Toast.makeText(requireContext(), "Product Added Succefully", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        })
     }
 
 }

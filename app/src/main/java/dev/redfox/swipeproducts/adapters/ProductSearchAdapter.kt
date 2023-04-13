@@ -10,8 +10,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import dev.redfox.swipeproducts.R
-import dev.redfox.swipeproducts.databinding.ProductItemLayoutBinding
-import dev.redfox.swipeproducts.models.productListModel
 import dev.redfox.swipeproducts.models.productListModelItem
 
 class ProductSearchAdapter(

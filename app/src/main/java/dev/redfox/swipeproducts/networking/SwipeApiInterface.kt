@@ -17,7 +17,7 @@ interface SwipeApiInterface {
 
     @Multipart
     @POST("/api/public/add")
-    suspend fun addProducts(
+    suspend fun addProductsWithImage(
         @Part("product_name") productName: RequestBody,
         @Part("product_type") productType: RequestBody,
         @Part("price") price: RequestBody,
@@ -25,4 +25,12 @@ interface SwipeApiInterface {
         @Part productImage: MultipartBody.Part
     ): Response<productAddModel>
 
+    @Multipart
+    @POST("/api/public/add")
+    suspend fun addProductsWithoutImage(
+        @Part("product_name") productName: RequestBody,
+        @Part("product_type") productType: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("tax") tax: RequestBody
+    ): Response<productAddModel>
 }

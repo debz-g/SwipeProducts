@@ -70,7 +70,7 @@
                 android:outlineAmbientShadowColor="@color/transparent"
                 android:outlineSpotShadowColor="@color/transparent"
                 android:shadowColor="@color/transparent"
-                app:cardBackgroundColor="@color/color_bottom_card"
+                app:cardBackgroundColor="@color/card_color4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:strokeColor="@color/transparent"

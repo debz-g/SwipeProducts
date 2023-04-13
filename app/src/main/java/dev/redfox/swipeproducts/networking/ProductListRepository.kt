@@ -15,7 +15,11 @@ class ProductListRepository @Inject constructor(private val swipeApiInterface: S
         return swipeApiInterface.getProducts()
     }
 
-    suspend fun addProducts(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody, productImage: MultipartBody.Part): Response<productAddModel>{
-        return swipeApiInterface.addProducts(productName,productType,price,tax,productImage)
+    suspend fun addProductsWithImage(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody, productImage: MultipartBody.Part): Response<productAddModel>{
+        return swipeApiInterface.addProductsWithImage(productName,productType,price,tax,productImage)
+    }
+
+    suspend fun addProductsWithoutImage(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody): Response<productAddModel>{
+        return swipeApiInterface.addProductsWithoutImage(productName,productType,price,tax)
     }
 }

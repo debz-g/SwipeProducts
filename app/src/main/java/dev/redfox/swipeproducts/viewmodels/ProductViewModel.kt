@@ -1,13 +1,11 @@
 package dev.redfox.swipeproducts.viewmodels
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.redfox.swipeproducts.models.productAddModel
-import dev.redfox.swipeproducts.models.productListModel
 import dev.redfox.swipeproducts.models.productListModelItem
 import dev.redfox.swipeproducts.networking.ProductListRepository
 import kotlinx.coroutines.launch
@@ -25,6 +23,9 @@ class ProductViewModel @Inject constructor(private val productListRepository: Pr
     private var _addApiResponse = MutableLiveData<Response<productAddModel>>()
     val addApiResponse: MutableLiveData<Response<productAddModel>> get() = _addApiResponse
 
+    private var _addApiResponseAlt = MutableLiveData<Response<productAddModel>>()
+    val addApiResponseAlt: MutableLiveData<Response<productAddModel>> get() = _addApiResponseAlt
+
     fun getProducts() {
         viewModelScope.launch {
             val dResponse = productListRepository.getProducts()
@@ -32,17 +33,17 @@ class ProductViewModel @Inject constructor(private val productListRepository: Pr
         }
     }
 
-    fun addProducts(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody, productImage: MultipartBody.Part){
+    fun addProductsWithImage(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody, productImage: MultipartBody.Part){
         viewModelScope.launch {
-            val addProductsResponse=productListRepository.addProducts(productName,productType,price,tax,productImage)
+            val addProductsResponse=productListRepository.addProductsWithImage(productName,productType,price,tax,productImage)
             _addApiResponse.value = addProductsResponse
         }
     }
-}
 
-@Suppress("UNCHECKED_CAST")
-class ProductViewModelFactory(val productListRepository: ProductListRepository): ViewModelProvider.Factory{
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ProductViewModel(productListRepository) as T
+    fun addProductsWithoutImage(productName: RequestBody, productType: RequestBody, price: RequestBody, tax: RequestBody){
+        viewModelScope.launch {
+            val addProductsResponseAlt=productListRepository.addProductsWithoutImage(productName,productType,price,tax)
+            _addApiResponseAlt.value = addProductsResponseAlt
+        }
     }
 }
